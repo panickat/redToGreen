@@ -44,11 +44,15 @@ function relocate() {
 }
 
 function matchDownloaded() {
+  editCSS();
   content().forEach((div) => {
     let data = div.querySelectorAll("a")[1];
     removed = removeVidDownloaded(data);
 
     if (!removed) {
+      data.classList.remove("post-content");
+      data.classList.add("post-content");
+
       let vidLength = data.querySelectorAll("div")[3].textContent;
       let [horas, minutos, segundos] = vidLength
         .split(":")
@@ -62,3 +66,40 @@ function matchDownloaded() {
 }
 
 matchDownloaded();
+
+function editCSS() {
+  const black_selectors = [
+    ".content .post-container .button",
+    ".footer a",
+    ".header",
+    ".search",
+  ];
+  document.querySelector("body").style.backgroundColor = "black";
+  document.querySelector(".content").style.backgroundColor = "black";
+  document.querySelector(".content").style.maxWidth = "100%";
+  document.querySelector(".backtotop").style.backgroundColor = "black";
+  document.querySelector(".backtotop").style.borderBottom = "0";
+
+  var hojaDeEstilo = document.styleSheets[0];
+  var reglasDeEstilo = hojaDeEstilo.cssRules || hojaDeEstilo.rules;
+
+  for (var i = 0; i < reglasDeEstilo.length; i++) {
+    var regla = reglasDeEstilo[i];
+
+    if (regla.selectorText == ".content .post-container .post-content") {
+      regla.style.backgroundColor = "black";
+      regla.style.maxWidth = "100%";
+      regla.style.padding = "0px 1px 0px 0px";
+      regla.style.backgroundColor = "black";
+    }
+
+    if (regla.selectorText == ".content .post-container") {
+      regla.style.margin = "0";
+      regla.style.backgroundColor = "black";
+    }
+    if (black_selectors.includes(regla.selectorText)) {
+      regla.style.backgroundColor = "black";
+    }
+  }
+  console.info("css edited");
+}

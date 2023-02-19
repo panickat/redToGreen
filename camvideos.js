@@ -32,8 +32,8 @@ function relocate() {
   // Convierte los elementos div en un array para poder ordenarlos
   let divsArray = Array.from(content());
   divsArray.sort(function (a, b) {
-    left = parseInt(a.querySelectorAll("div")[3].textContent);
-    right = parseInt(b.querySelectorAll("div")[3].textContent);
+    left = parseInt(a.querySelectorAll("div")[0].textContent);
+    right = parseInt(b.querySelectorAll("div")[0].textContent);
     return left - right;
   });
 
@@ -42,30 +42,6 @@ function relocate() {
     div.parentElement.appendChild(div); // Mueve el elemento div al final de su contenedor
   });
 }
-
-function matchDownloaded() {
-  editCSS();
-  content().forEach((div) => {
-    let data = div.querySelectorAll("a")[1];
-    removed = removeVidDownloaded(data);
-
-    if (!removed) {
-      data.classList.remove("post-content");
-      data.classList.add("post-content");
-
-      let vidLength = data.querySelectorAll("div")[3].textContent;
-      let [horas, minutos, segundos] = vidLength
-        .split(":")
-        .map((valor) => parseInt(valor));
-      let vidSeconds = horas * 3600 + minutos * 60 + segundos;
-
-      data.querySelectorAll("div")[3].textContent = vidSeconds;
-    }
-  });
-  relocate();
-}
-
-matchDownloaded();
 
 function editCSS() {
   const black_selectors = [
@@ -101,5 +77,31 @@ function editCSS() {
       regla.style.backgroundColor = "black";
     }
   }
-  console.info("css edited");
 }
+
+function matchDownloaded() {
+  editCSS();
+  content().forEach((div) => {
+    let data = div.querySelectorAll("a")[1];
+    removed = removeVidDownloaded(data);
+
+    if (!removed) {
+      let vidLength = data.querySelectorAll("div")[3].textContent;
+      let [horas, minutos, segundos] = vidLength
+        .split(":")
+        .map((valor) => parseInt(valor));
+
+      let vidSeconds = horas * 3600 + minutos * 60 + segundos;
+
+      //data.querySelectorAll("div")[3].textContent = vidSeconds;
+      array = data.querySelectorAll("div");
+      for (let index = 0; index < array.length; index++) {
+        index == 3
+          ? (array[index].textContent = vidSeconds)
+          : array[index].remove();
+      }
+    }
+  });
+  relocate();
+}
+matchDownloaded();

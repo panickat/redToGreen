@@ -82,7 +82,9 @@ function editCSS() {
 function matchDownloaded() {
   editCSS();
   content().forEach((div) => {
-    let data = div.querySelectorAll("a")[1];
+    div.removeChild(div.children[0]);
+    div.removeChild(div.children[0]);
+    data = div.children[0]; //a > img > 5to elemento duration
     removed = removeVidDownloaded(data);
 
     if (!removed) {

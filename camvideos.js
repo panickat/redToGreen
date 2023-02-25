@@ -1,3 +1,36 @@
+// ==UserScript==
+// @name        New script - camvideos.me
+// @namespace   Violentmonkey Scripts
+// @match       http://camvideos.me/*
+// @grant       none
+// @version     1.0
+// @author      -
+// @description 2/19/2023, 2:20:07 AM
+// @noframes
+// @run-at document-idle
+// ==/UserScript==
+
+let typedNumbers = "";
+
+document.body.addEventListener("keydown", (event) => {
+  // Check if the key pressed is a number
+  if (/[0-9]/.test(event.key)) {
+    // Concatenate the typed number with the existing numbers
+    typedNumbers += event.key;
+  } else if (event.key === "Enter") {
+    // Navigate to the new URL
+    const page = window.location.href;
+    const baseUrl = page.substring(
+      0,
+      page.indexOf("?") > -1 ? page.indexOf("?") : page.length
+    );
+
+    window.location.href = `${baseUrl}?page=${typedNumbers}`;
+    // Clear the string
+    typedNumbers = "";
+  }
+});
+//
 function loadDb() {
   return [
     { date: "19082021", hour: "0220" },
@@ -22,6 +55,7 @@ function removeVidDownloaded(data) {
 
   vidsDownloaded.forEach((vid) => {
     if (vid["date"] == vidDate && vidHour == vid["hour"]) {
+      console.info(vid);
       data.parentElement.remove();
       removed = true;
     }
@@ -106,4 +140,8 @@ function matchDownloaded() {
   });
   relocate();
 }
+
+//document.addEventListener("DOMContentLoaded", function() {
+//  matchDownloaded();
+//});
 matchDownloaded();

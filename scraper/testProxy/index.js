@@ -15,7 +15,16 @@ router.use("/search/:id", (req, res, next) => {
   next();
 });
 
-app.use("/", router);
+app.use("/", router, (req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  res.header("Allow", "GET, POST, OPTIONS, PUT, DELETE");
+  next();
+});
 
 app.listen(8080, () => {
   console.log("Server listening on port 8080");

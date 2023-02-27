@@ -1,5 +1,5 @@
 module.exports = {
-  Serve: {
+  devServer: {
     before: require("./testProxy"),
   },
 };

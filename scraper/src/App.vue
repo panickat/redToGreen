@@ -29,9 +29,8 @@ export default {
   },
   methods: {
     getWebsiteData() {
-      console.info("getWebsiteData");
       let self = this;
-      let url = "http://google.com";
+      let url = "http://localhost:8080/search/sexy_limit69";
       let dataArray = []; // we put data in this array
       // GET request for remote image in node.js
       axios({
@@ -42,8 +41,8 @@ export default {
 
         let $ = cheerio.load(html);
 
-        $("ul.tertiary li").each(function () {
-          const title = $(this).find("h3").attr("aria-label");
+        $("body > div > .post-container").each(function () {
+          const title = $(this).find("h2");
           const image = $(this).find("img").attr("src");
 
           // putting data in array.

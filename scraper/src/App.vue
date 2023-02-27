@@ -24,15 +24,15 @@ export default {
   },
   data() {
     return {
-      lastestArticles: [], // defined empty array variable
+      lastestArticles: [],
     };
   },
   methods: {
     getWebsiteData() {
       let self = this;
       let url = "http://localhost:8080/search/sexy_limit69";
-      let dataArray = []; // we put data in this array
-      // GET request for remote image in node.js
+      let dataArray = [];
+
       axios({
         method: "get",
         url: url,
@@ -53,9 +53,7 @@ export default {
           });
         });
 
-        self.lastestArticles = dataArray; // Here we assign value to vuejs variable
-
-        console.log(dataArray);
+        self.lastestArticles = dataArray;
       });
     },
   },

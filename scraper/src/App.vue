@@ -1,8 +1,8 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="from app vue" />
+  <HelloWorld msg="msg=HelloWorld" />
   <div>
-    <h1>Web Scraper</h1>
+    <h1>Web Scraper App.vue</h1>
+    <button v-on:click="getWebsiteData"></button>
     <div class="wrapper">
       <div v-for="(article, index) in lastestArticles" :key="index">
         <span v-text="article.title"></span>
@@ -29,8 +29,9 @@ export default {
   },
   methods: {
     getWebsiteData() {
+      console.info("getWebsiteData");
       let self = this;
-      let url = "https://www.msn.com/en-au?AR=1"; // url we get data from
+      let url = "http://google.com";
       let dataArray = []; // we put data in this array
       // GET request for remote image in node.js
       axios({

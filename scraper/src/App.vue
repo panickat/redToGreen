@@ -31,57 +31,58 @@ export default {
   },
   methods: {
     getWebsiteData() {
-      let self = this;
-      let pages = 1;
-      console.log("getWebsiteData");
+      // let self = this;
+      // let dataArray = [];
+      const url =
+        "http://localhost:8080/search/" +
+        window.location.pathname.split("/")[1]; // + `?page=${page}`;
 
-      function getPage(page) {
-        let dataArray = [];
-        const url =
-          "http://localhost:8080/search/" +
-          window.location.pathname.split("/")[1] +
-          `?page=${page}`;
-
-        console.log("Before axios:\n", page, url);
-        axios({
+      function scrap(page) {
+        return axios({
           method: "get",
-          url: url,
+          url: url + `?page=${page}`,
         }).then(function (response) {
           let html = response.data;
           let $ = cheerio.load(html);
 
-          const totalPages = $("body > div > div.search-numbers").text();
-          const numberEnd = totalPages.indexOf(" search");
-          pages = Math.ceil(parseInt(totalPages.substring(0, numberEnd)) / 90);
-          console.log("pages: ", pages);
-
-          $("body > div > .post-container").each(function () {
-            const img = $(this).find("a.post-content > img").attr("src");
-            const length = $(this)
-              .find("a.post-content > div:nth-child(5)")
-              .text();
-            const download = $(this).find("a.button").attr("href");
-
-            const [hours, minutes, seconds] = length.split(":").map(Number);
-            const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-            // putting data in array.
-            dataArray.push({
-              img: img,
-              length: totalSeconds,
-              download: download,
-            });
-          });
-          self.lastestArticles = dataArray.concat(self.lastestArticles);
+          const activepage = $("body > div > nav").find(".active").text();
+          let numberofpages = $("body > div > nav")
+            .find(".numberofpages")
+            .text();
+          numberofpages = numberofpages.substring(2, numberofpages.length);
+          console.info(activepage, numberofpages);
+          return activepage == numberofpages ? true : false;
         });
       }
 
-      for (let pageIndex = 1; pageIndex <= pages + 1; pageIndex++) {
-        console.log("for:\n", "pages: ", pages, "index", pageIndex);
-        getPage(pageIndex);
+      // let r = scrap();
+      // r.then((isLast) => {
+      //   return;
+      // });
+
+      function promiseChainUntilLast(isLast, value) {
+        return new Promise(function (resolve, reject) {
+          if (isLast) {
+            resolve(value);
+          } else {
+            const r = scrap(value);
+            r.then((isLastFromScrap) => {
+              console.info("isLastFromScrap: ", isLastFromScrap);
+              promiseChainUntilLast(isLastFromScrap, value + 1)
+                .then(resolve)
+                .catch(reject);
+            });
+          }
+        });
       }
-      self.lastestArticles = self.lastestArticles.sort(
-        (a, b) => a.length - b.length
-      );
+
+      promiseChainUntilLast(false, 1)
+        .then(function (result) {
+          console.log("Result:", result);
+        })
+        .catch(function (error) {
+          console.log("Error:", error);
+        });
     },
   },
 };

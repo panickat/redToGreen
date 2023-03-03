@@ -26,32 +26,37 @@ export default {
   mounted() {
     this.loadFocus();
   },
+  data() {
+    return { cards: [] };
+  },
   methods: {
     loadFocus() {
       this.$refs.start_scrap.focus();
     },
     getWebsiteData() {
       const startTime = new Date();
-      //const cards = require("./getCards");
 
-      function promiseChainUntilLast(isLast, value) {
+      function promiseChainUntilLast(isLast, loadingCards, page) {
         return new Promise(function (resolve, reject) {
           if (isLast) {
-            resolve(value);
+            resolve(loadingCards);
           } else {
-            // const r = cards.scrap(value, axios, cheerio);
-            cards.scrap(value, axios, cheerio).then((response) => {
-              console.info("response.lastPage: ", response.cards);
-              promiseChainUntilLast(response.lastPage, value + 1)
+            // const r = cards.scrap(page, axios, cheerio);
+            cards.scrap(page, axios, cheerio).then((response) => {
+              // console.info("response: ", response.cards);
+              loadingCards = loadingCards.concat(response.cards);
+              promiseChainUntilLast(response.lastPage, loadingCards, page + 1)
                 .then(resolve)
                 .catch(reject);
             });
           }
         });
       }
-      promiseChainUntilLast(false, 1)
-        .then(function (result) {
-          console.log("Result:", result);
+
+      promiseChainUntilLast(false, [], 1)
+        .then((loadedCards) => {
+          console.log(loadedCards[0].length);
+          this.cards = loadedCards;
           cards.endTime("end chain", startTime);
         })
         .catch(function (error) {

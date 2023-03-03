@@ -31,6 +31,24 @@ export default {
   },
   methods: {
     getWebsiteData() {
+      const startTime = new Date();
+      function endTime(tittle) {
+        function convertTime(ms) {
+          if (ms < 1000) {
+            return `${ms} ms`;
+          } else if (ms < 60000) {
+            return `${(ms / 1000).toFixed(2)} s`;
+          } else {
+            return `${(ms / 60000).toFixed(2)} m`;
+          }
+        }
+
+        const endTime = new Date();
+        const timeDiff = endTime - startTime;
+
+        console.log(`${tittle}: ${convertTime(timeDiff)}`);
+      }
+
       // let self = this;
       // let dataArray = [];
       const url =
@@ -55,11 +73,6 @@ export default {
         });
       }
 
-      // let r = scrap();
-      // r.then((isLast) => {
-      //   return;
-      // });
-
       function promiseChainUntilLast(isLast, value) {
         return new Promise(function (resolve, reject) {
           if (isLast) {
@@ -79,10 +92,13 @@ export default {
       promiseChainUntilLast(false, 1)
         .then(function (result) {
           console.log("Result:", result);
+          endTime("end chain");
         })
         .catch(function (error) {
           console.log("Error:", error);
         });
+
+      endTime("end Click");
     },
   },
 };

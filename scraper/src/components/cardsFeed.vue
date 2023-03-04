@@ -1,15 +1,13 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <button ref="start_scrap" v-on:click="getWebsiteData"></button>
-    <!-- <div class="wrapper">
-      <div v-for="(article, index) in lastestArticles" :key="index">
-        <span v-text="article.length"></span>
-        <span v-text="article.download"></span>
-        <img v-bind:src="article.img" />
-        <hr />
-      </div>
-    </div> -->
+  <button ref="start_scrap" v-on:click="getWebsiteData"></button>
+  <div class="container">
+    <div
+      v-for="(card, index) in cards"
+      :key="index"
+      class="column neumorphism1"
+    >
+      <img v-bind:src="card.img" />
+    </div>
   </div>
 </template>
 
@@ -41,9 +39,7 @@ export default {
           if (isLast) {
             resolve(loadingCards);
           } else {
-            // const r = cards.scrap(page, axios, cheerio);
             cards.scrap(page, axios, cheerio).then((response) => {
-              // console.info("response: ", response.cards);
               loadingCards = loadingCards.concat(response.cards);
               promiseChainUntilLast(response.lastPage, loadingCards, page + 1)
                 .then(resolve)
@@ -55,8 +51,7 @@ export default {
 
       promiseChainUntilLast(false, [], 1)
         .then((loadedCards) => {
-          console.log(loadedCards[0].length);
-          this.cards = loadedCards;
+          this.cards = loadedCards.sort((a, b) => a.length - b.length);
           cards.endTime("end chain", startTime);
         })
         .catch(function (error) {
@@ -73,15 +68,34 @@ button {
   width: 50%;
   height: 30px;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+.container {
+  margin-top: 70px;
+  margin-left: 5px;
+  margin-right: 5px;
+  max-width: 100%;
+  /* margin: 0px auto; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+.column {
+  flex-basis: calc(33.33% - 4px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 15px;
+  overflow: hidden;
 }
-a {
-  color: #42b983;
+.column img {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.neumorphism1 {
+  border-radius: 32px;
+  background: linear-gradient(45deg, #353535, #0f0f0f);
+  box-shadow: -5px -5px 10px #353535, 5px 5px 10px #000000;
 }
 </style>

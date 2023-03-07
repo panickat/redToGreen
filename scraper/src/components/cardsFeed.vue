@@ -1,5 +1,4 @@
 <template>
-  <button ref="start_scrap" v-on:click="getWebsiteData"></button>
   <div class="container" ref="container" v-on:scroll="checkScrollPosition">
     <div
       v-for="(card, index) in displayedCards"
@@ -22,14 +21,14 @@ export default {
     msg: String,
   },
   mounted() {
-    this.loadFocus();
+    this.getWebsiteData();
   },
   data() {
     return {
       cards: [],
       displayedCards: [],
       loadedLength: 0,
-      chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800],
+      chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
     };
   },
   methods: {
@@ -65,14 +64,20 @@ export default {
         });
     },
     checkScrollPosition() {
-      console.info("checkScrollPosition: ");
       const container = this.$refs.container;
-      if (
-        container.scrollTop + container.offsetHeight >=
-        container.scrollHeight
-      ) {
-        this.loadNextChunk();
-        console.info("checkScrollPosition: ");
+      let sized = container.scrollTop + container.offsetHeight;
+      // console.info(
+      //   "sized: ",
+      //   sized,
+      //   "\nscrollHeight: ",
+      //   container.scrollHeight
+      // );
+      if (sized >= container.scrollHeight - 100) {
+        setTimeout(() => {
+          this.loadNextChunk();
+          console.info("loadedLength: ", this.loadedLength);
+          console.info("displayedCards: ", this.displayedCards.length);
+        }, 1000);
       }
     },
     loadNextChunk() {
@@ -94,15 +99,20 @@ export default {
 </script>
 
 <style scoped>
+* {
+  background-color: black;
+  margin: 0px;
+  padding: 0px;
+}
 /* <!-- Add "scoped" attribute to limit CSS to this component only --> */
 button {
   width: 50%;
   height: 30px;
+  color: aquamarine;
 }
 .container {
-  margin-top: 70px;
-  margin-left: 5px;
-  margin-right: 5px;
+  height: 750px;
+  overflow-y: scroll;
   max-width: 100%;
   /* margin: 0px auto; */
   display: flex;

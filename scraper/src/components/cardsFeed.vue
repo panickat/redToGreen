@@ -1,5 +1,6 @@
 <template>
   <div class="container" ref="container" v-on:scroll="checkScrollPosition">
+    <div v-for="(size, index) in chunkSizes" :key="index"></div>
     <div
       v-for="(card, index) in displayedCards"
       :key="index"
@@ -32,9 +33,7 @@ export default {
     };
   },
   methods: {
-    loadFocus() {
-      this.$refs.start_scrap.focus();
-    },
+    loadFocus() {},
     getWebsiteData() {
       const startTime = new Date();
 
@@ -56,7 +55,9 @@ export default {
       promiseChainUntilLast(false, [], 1)
         .then((loadedCards) => {
           this.cards = loadedCards.sort((a, b) => a.length - b.length);
+
           this.loadNextChunk();
+
           cards.endTime("end chain", startTime);
         })
         .catch(function (error) {
@@ -66,21 +67,17 @@ export default {
     checkScrollPosition() {
       const container = this.$refs.container;
       let sized = container.scrollTop + container.offsetHeight;
-      // console.info(
-      //   "sized: ",
-      //   sized,
-      //   "\nscrollHeight: ",
-      //   container.scrollHeight
-      // );
       if (sized >= container.scrollHeight - 100) {
         setTimeout(() => {
           this.loadNextChunk();
-          console.info("loadedLength: ", this.loadedLength);
-          console.info("displayedCards: ", this.displayedCards.length);
         }, 1000);
       }
     },
     loadNextChunk() {
+      if (this.cards.length <= 9) {
+        this.displayedCards = this.cards;
+        return;
+      }
       const nextChunkSize = this.chunkSizes.find(
         (size) => size > this.loadedLength
       );

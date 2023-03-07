@@ -1,8 +1,8 @@
 <template>
   <button ref="start_scrap" v-on:click="getWebsiteData"></button>
-  <div class="container">
+  <div class="container" ref="container" v-on:scroll="checkScrollPosition">
     <div
-      v-for="(card, index) in cards"
+      v-for="(card, index) in displayedCards"
       :key="index"
       class="column neumorphism1"
     >
@@ -25,7 +25,12 @@ export default {
     this.loadFocus();
   },
   data() {
-    return { cards: [] };
+    return {
+      cards: [],
+      displayedCards: [],
+      loadedLength: 0,
+      chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800],
+    };
   },
   methods: {
     loadFocus() {
@@ -52,11 +57,37 @@ export default {
       promiseChainUntilLast(false, [], 1)
         .then((loadedCards) => {
           this.cards = loadedCards.sort((a, b) => a.length - b.length);
+          this.loadNextChunk();
           cards.endTime("end chain", startTime);
         })
         .catch(function (error) {
           console.log("Error:", error);
         });
+    },
+    checkScrollPosition() {
+      console.info("checkScrollPosition: ");
+      const container = this.$refs.container;
+      if (
+        container.scrollTop + container.offsetHeight >=
+        container.scrollHeight
+      ) {
+        this.loadNextChunk();
+        console.info("checkScrollPosition: ");
+      }
+    },
+    loadNextChunk() {
+      const nextChunkSize = this.chunkSizes.find(
+        (size) => size > this.loadedLength
+      );
+      if (nextChunkSize) {
+        const nextCards = this.cards.filter(
+          //(card) => card.length <= nextChunkSize
+          (card) =>
+            card.length <= nextChunkSize && card.length > this.loadedLength
+        );
+        this.loadedLength = nextChunkSize;
+        this.displayedCards = [...this.displayedCards, ...nextCards];
+      }
     },
   },
 };

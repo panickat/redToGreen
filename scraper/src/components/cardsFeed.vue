@@ -1,12 +1,28 @@
 <template>
-  <div class="container" ref="container" v-on:scroll="checkScrollPosition">
-    <div v-for="(size, index) in chunkSizes" :key="index"></div>
-    <div
-      v-for="(card, index) in displayedCards"
-      :key="index"
-      class="column neumorphism1"
-    >
-      <img v-bind:src="card.img" />
+  <div>
+    <!-- tittles -->
+    <div class="tittles">
+      <div v-for="chunkSize in chunkSizes" :key="chunkSize" class="tittle">
+        <h2 v-if="chunkSize <= 3600" v-on:click="loadNextChunk(chunkSize)">
+          {{ chunkSize / 60 }}
+        </h2>
+        <h2 v-if="chunkSize > 3600" v-on:click="loadNextChunk(chunkSize)">
+          {{ (chunkSize / 60 / 60).toFixed(1) }}
+        </h2>
+      </div>
+    </div>
+    <!-- containers -->
+    <div class="containers">
+      <div v-for="chunkSize in chunkSizes" :key="chunkSize" class="container">
+        <!-- Iterate over displayedCards and set an img src to card.img -->
+        <div
+          v-for="card in cards[chunkSize]"
+          :key="card.img"
+          class="column neuromorphism1"
+        >
+          <img v-if="card.length <= chunkSize" :src="card.img" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -37,6 +53,26 @@ export default {
     getWebsiteData() {
       const startTime = new Date();
 
+      function spread(cards, chunkSizes) {
+        const cardsByChunk = {};
+        // Initialize empty arrays for each chunk size
+        chunkSizes.forEach((size) => {
+          cardsByChunk[size] = [];
+        });
+
+        // Loop through each card and append it to the appropriate chunk size
+        cards.forEach((card) => {
+          const length = card.length;
+          for (const size of chunkSizes) {
+            if (length <= size) {
+              cardsByChunk[size].push(card);
+              break;
+            }
+          }
+        });
+        return cardsByChunk;
+      }
+
       function promiseChainUntilLast(isLast, loadingCards, page) {
         return new Promise(function (resolve, reject) {
           if (isLast) {
@@ -54,10 +90,8 @@ export default {
 
       promiseChainUntilLast(false, [], 1)
         .then((loadedCards) => {
-          this.cards = loadedCards.sort((a, b) => a.length - b.length);
-
-          this.loadNextChunk();
-
+          const sortedCards = loadedCards.sort((a, b) => a.length - b.length);
+          this.cards = spread(sortedCards, this.chunkSizes);
           cards.endTime("end chain", startTime);
         })
         .catch(function (error) {
@@ -73,23 +107,26 @@ export default {
         }, 1000);
       }
     },
-    loadNextChunk() {
-      if (this.cards.length <= 9) {
-        this.displayedCards = this.cards;
-        return;
-      }
-      const nextChunkSize = this.chunkSizes.find(
-        (size) => size > this.loadedLength
-      );
-      if (nextChunkSize) {
-        const nextCards = this.cards.filter(
-          //(card) => card.length <= nextChunkSize
-          (card) =>
-            card.length <= nextChunkSize && card.length > this.loadedLength
-        );
-        this.loadedLength = nextChunkSize;
-        this.displayedCards = [...this.displayedCards, ...nextCards];
-      }
+    loadNextChunk(chunkSize) {
+      console.info("chunkSize: ", chunkSize);
+      console.info("cards: ", this.cards["360"][0].img);
+
+      // if (this.cards.length <= 9) {
+      //   this.displayedCards = this.cards;
+      //   return;
+      // }
+      // const nextChunkSize = this.chunkSizes.find(
+      //   (size) => size > this.loadedLength
+      // );
+      // if (nextChunkSize) {
+      //   const nextCards = this.cards.filter(
+      //     //(card) => card.length <= nextChunkSize
+      //     (card) =>
+      //       card.length <= nextChunkSize && card.length > this.loadedLength
+      //   );
+      //   this.loadedLength = nextChunkSize;
+      //   this.displayedCards = [...this.displayedCards, ...nextCards];
+      // }
     },
   },
 };
@@ -98,15 +135,21 @@ export default {
 <style scoped>
 * {
   background-color: black;
+  color: #353535;
   margin: 0px;
   padding: 0px;
 }
-/* <!-- Add "scoped" attribute to limit CSS to this component only --> */
-button {
-  width: 50%;
-  height: 30px;
-  color: aquamarine;
+.tittles {
+  display: flex;
+  flex-wrap: wrap;
 }
+.tittles .tittle {
+  flex-basis: calc(11.11% - 10px);
+  margin: 5px;
+  background-color: #ccc;
+  text-align: center;
+}
+/* <!-- Add "scoped" attribute to limit CSS to this component only --> */
 .container {
   height: 750px;
   overflow-y: scroll;

@@ -16,7 +16,11 @@
       <div
         v-for="chunkSize in chunkSizes"
         :key="chunkSize"
-        class="wrapper inactive"
+        :class="{
+          wrapper: true,
+          active: wrapperActive(chunkSize),
+          inactive: !wrapperActive(chunkSize),
+        }"
         :id="chunkSize"
       >
         <div class="container">
@@ -26,7 +30,7 @@
             :key="card.img"
             class="column neuromorphism1"
           >
-            <img v-if="card.length <= chunkSize" :src="card.img" />
+            <img :src="wrapperActive(chunkSize) ? card.img : ''" />
           </div>
         </div>
       </div>
@@ -50,8 +54,7 @@ export default {
   data() {
     return {
       cards: [],
-      displayedCards: [],
-      loadedLength: 0,
+      activeChunkSize: 0,
       chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
     };
   },
@@ -116,16 +119,18 @@ export default {
     },
     loadNextChunk(chunkSize) {
       // console.info("cards: ", this.cards["360"][0].img);
-      const el = document.getElementById(chunkSize);
-      const lastActive = document.querySelector(".containers .wrapper.active");
+      this.activeChunkSize = chunkSize;
+      // const el = document.getElementById(chunkSize);
+      // const lastActive = document.querySelector(".containers .wrapper.active");
 
-      if (lastActive) {
-        lastActive.classList.add("inactive");
-        lastActive.classList.remove("active");
-      }
+      // if (lastActive) {
+      //   lastActive.classList.add("inactive");
+      //   lastActive.classList.remove("active");
+      // }
 
-      el.classList.remove("inactive");
-      el.classList.add("active");
+      // el.classList.remove("inactive");
+      // el.classList.add("active");
+
       // if (this.cards.length <= 9) {
       //   this.displayedCards = this.cards;
       //   return;
@@ -142,6 +147,14 @@ export default {
       //   this.loadedLength = nextChunkSize;
       //   this.displayedCards = [...this.displayedCards, ...nextCards];
       // }
+    },
+    wrapperActive(chunkSize) {
+      return chunkSize === this.activeChunkSize;
+    },
+  },
+  computed: {
+    wrapperActive2: function (chunkSize) {
+      return chunkSize === this.activeChunkSize;
     },
   },
 };

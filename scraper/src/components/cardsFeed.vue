@@ -29,6 +29,7 @@
             v-for="card in cards[chunkSize]"
             :key="card.img"
             class="column neuromorphism1"
+            v-on:click="selectCard(card.download, chunkSize)"
           >
             <img :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''" />
           </div>
@@ -50,15 +51,24 @@ export default {
   },
   mounted() {
     this.getWebsiteData();
+    this.initializeSelectedCards();
   },
   data() {
     return {
-      cards: [],
+      cards: {},
       activeChunkSize: 0,
       chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
+      selectedCards: {},
     };
   },
   methods: {
+    initializeSelectedCards() {
+      this.chunkSizes.forEach((chunkSize) => {
+        if (!this.selectedCards[chunkSize]) {
+          this.selectedCards[chunkSize] = [];
+        }
+      });
+    },
     loadFocus() {},
     getWebsiteData() {
       const startTime = new Date();
@@ -151,12 +161,22 @@ export default {
     wrapperActive(chunkSize) {
       return chunkSize === this.activeChunkSize;
     },
-  },
-  computed: {
-    wrapperActive2: function (chunkSize) {
-      return chunkSize === this.activeChunkSize;
+    selectCard(cardId, chunkSize) {
+      const cardIndex = this.cards[chunkSize].findIndex(
+        (item) => item.download === cardId
+      );
+
+      // create a Set to keep track of the unique values in this.selectedCards[chunkSize]
+      const cardIndexSet = new Set(this.selectedCards[chunkSize]);
+
+      // add the cardIndex to the Set
+      cardIndexSet.add(cardIndex);
+
+      // convert the Set back to an array and assign it to this.selectedCards[chunkSize]
+      this.selectedCards[chunkSize] = Array.from(cardIndexSet);
     },
   },
+  computed: {},
 };
 </script>
 
@@ -215,5 +235,15 @@ export default {
   border-radius: 32px;
   background: linear-gradient(45deg, #353535, #0f0f0f);
   box-shadow: -5px -5px 10px #353535, 5px 5px 10px #000000;
+}
+img {
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 </style>

@@ -30,7 +30,7 @@
             :key="card.img"
             class="column neuromorphism1"
           >
-            <img :src="wrapperActive(chunkSize) ? card.img : ''" />
+            <img :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''" />
           </div>
         </div>
       </div>

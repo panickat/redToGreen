@@ -13,14 +13,21 @@
     </div>
     <!-- containers -->
     <div class="containers">
-      <div v-for="chunkSize in chunkSizes" :key="chunkSize" class="container">
-        <!-- Iterate over displayedCards and set an img src to card.img -->
-        <div
-          v-for="card in cards[chunkSize]"
-          :key="card.img"
-          class="column neuromorphism1"
-        >
-          <img v-if="card.length <= chunkSize" :src="card.img" />
+      <div
+        v-for="chunkSize in chunkSizes"
+        :key="chunkSize"
+        class="wrapper inactive"
+        :id="chunkSize"
+      >
+        <div class="container">
+          <!-- Iterate over displayedCards and set an img src to card.img -->
+          <div
+            v-for="card in cards[chunkSize]"
+            :key="card.img"
+            class="column neuromorphism1"
+          >
+            <img v-if="card.length <= chunkSize" :src="card.img" />
+          </div>
         </div>
       </div>
     </div>
@@ -108,9 +115,17 @@ export default {
       }
     },
     loadNextChunk(chunkSize) {
-      console.info("chunkSize: ", chunkSize);
-      console.info("cards: ", this.cards["360"][0].img);
+      // console.info("cards: ", this.cards["360"][0].img);
+      const el = document.getElementById(chunkSize);
+      const lastActive = document.querySelector(".containers .wrapper.active");
 
+      if (lastActive) {
+        lastActive.classList.add("inactive");
+        lastActive.classList.remove("active");
+      }
+
+      el.classList.remove("inactive");
+      el.classList.add("active");
       // if (this.cards.length <= 9) {
       //   this.displayedCards = this.cards;
       //   return;
@@ -148,6 +163,15 @@ export default {
   margin: 5px;
   background-color: #ccc;
   text-align: center;
+}
+.active {
+  display: flex;
+}
+.inactive {
+  display: none;
+}
+.wrapper {
+  position: absolute;
 }
 /* <!-- Add "scoped" attribute to limit CSS to this component only --> */
 .container {

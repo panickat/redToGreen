@@ -1,12 +1,35 @@
 <template>
-  <button ref="start_scrap" v-on:click="getWebsiteData"></button>
-  <div class="container">
-    <div
-      v-for="(card, index) in cards"
-      :key="index"
-      class="column neumorphism1"
-    >
-      <img v-bind:src="card.img" />
+  <div>
+    <!-- tittles -->
+    <div class="tittles">
+      <div v-for="chunkSize in chunkSizes" :key="chunkSize" class="tittle">
+        <h2 v-if="chunkSize <= 3600" v-on:click="loadNextChunk(chunkSize)">
+          {{ chunkSize / 60 }}
+        </h2>
+        <h2 v-if="chunkSize > 3600" v-on:click="loadNextChunk(chunkSize)">
+          {{ (chunkSize / 60 / 60).toFixed(1) }}
+        </h2>
+      </div>
+    </div>
+    <!-- containers -->
+    <div class="containers">
+      <div
+        v-for="chunkSize in chunkSizes"
+        :key="chunkSize"
+        class="wrapper inactive"
+        :id="chunkSize"
+      >
+        <div class="container">
+          <!-- Iterate over displayedCards and set an img src to card.img -->
+          <div
+            v-for="card in cards[chunkSize]"
+            :key="card.img"
+            class="column neuromorphism1"
+          >
+            <img v-if="card.length <= chunkSize" :src="card.img" />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -22,17 +45,40 @@ export default {
     msg: String,
   },
   mounted() {
-    this.loadFocus();
+    this.getWebsiteData();
   },
   data() {
-    return { cards: [] };
+    return {
+      cards: [],
+      displayedCards: [],
+      loadedLength: 0,
+      chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
+    };
   },
   methods: {
-    loadFocus() {
-      this.$refs.start_scrap.focus();
-    },
+    loadFocus() {},
     getWebsiteData() {
       const startTime = new Date();
+
+      function spread(cards, chunkSizes) {
+        const cardsByChunk = {};
+        // Initialize empty arrays for each chunk size
+        chunkSizes.forEach((size) => {
+          cardsByChunk[size] = [];
+        });
+
+        // Loop through each card and append it to the appropriate chunk size
+        cards.forEach((card) => {
+          const length = card.length;
+          for (const size of chunkSizes) {
+            if (length <= size) {
+              cardsByChunk[size].push(card);
+              break;
+            }
+          }
+        });
+        return cardsByChunk;
+      }
 
       function promiseChainUntilLast(isLast, loadingCards, page) {
         return new Promise(function (resolve, reject) {
@@ -51,27 +97,86 @@ export default {
 
       promiseChainUntilLast(false, [], 1)
         .then((loadedCards) => {
-          this.cards = loadedCards.sort((a, b) => a.length - b.length);
+          const sortedCards = loadedCards.sort((a, b) => a.length - b.length);
+          this.cards = spread(sortedCards, this.chunkSizes);
           cards.endTime("end chain", startTime);
         })
         .catch(function (error) {
           console.log("Error:", error);
         });
     },
+    checkScrollPosition() {
+      const container = this.$refs.container;
+      let sized = container.scrollTop + container.offsetHeight;
+      if (sized >= container.scrollHeight - 100) {
+        setTimeout(() => {
+          this.loadNextChunk();
+        }, 1000);
+      }
+    },
+    loadNextChunk(chunkSize) {
+      // console.info("cards: ", this.cards["360"][0].img);
+      const el = document.getElementById(chunkSize);
+      const lastActive = document.querySelector(".containers .wrapper.active");
+
+      if (lastActive) {
+        lastActive.classList.add("inactive");
+        lastActive.classList.remove("active");
+      }
+
+      el.classList.remove("inactive");
+      el.classList.add("active");
+      // if (this.cards.length <= 9) {
+      //   this.displayedCards = this.cards;
+      //   return;
+      // }
+      // const nextChunkSize = this.chunkSizes.find(
+      //   (size) => size > this.loadedLength
+      // );
+      // if (nextChunkSize) {
+      //   const nextCards = this.cards.filter(
+      //     //(card) => card.length <= nextChunkSize
+      //     (card) =>
+      //       card.length <= nextChunkSize && card.length > this.loadedLength
+      //   );
+      //   this.loadedLength = nextChunkSize;
+      //   this.displayedCards = [...this.displayedCards, ...nextCards];
+      // }
+    },
   },
 };
 </script>
 
 <style scoped>
-/* <!-- Add "scoped" attribute to limit CSS to this component only --> */
-button {
-  width: 50%;
-  height: 30px;
+* {
+  background-color: black;
+  color: #353535;
+  margin: 0px;
+  padding: 0px;
 }
+.tittles {
+  display: flex;
+  flex-wrap: wrap;
+}
+.tittles .tittle {
+  flex-basis: calc(11.11% - 10px);
+  margin: 5px;
+  background-color: #ccc;
+  text-align: center;
+}
+.active {
+  display: flex;
+}
+.inactive {
+  display: none;
+}
+.wrapper {
+  position: absolute;
+}
+/* <!-- Add "scoped" attribute to limit CSS to this component only --> */
 .container {
-  margin-top: 70px;
-  margin-left: 5px;
-  margin-right: 5px;
+  height: 750px;
+  overflow-y: scroll;
   max-width: 100%;
   /* margin: 0px auto; */
   display: flex;

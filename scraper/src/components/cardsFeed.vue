@@ -27,10 +27,13 @@
           <!-- Iterate over displayedCards and set an img src to card.img -->
           <div
             v-for="card in cards[chunkSize]"
-            :key="card.img"
+            :key="card.download"
             class="column neuromorphism1"
+            v-on:click="selectCard(card)"
+            v-bind:class="{ selected: card.selected }"
+            v-show="selectedCards.length === 0 || selectedCards.includes(card)"
           >
-            <img :src="wrapperActive(chunkSize) ? card.img : ''" />
+            <img :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''" />
           </div>
         </div>
       </div>
@@ -50,16 +53,28 @@ export default {
   },
   mounted() {
     this.getWebsiteData();
+    document.addEventListener("keydown", this.handleKeyDown);
+    // this.initializeSelectedCards();
+  },
+  beforeUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown);
   },
   data() {
     return {
-      cards: [],
+      cards: {},
       activeChunkSize: 0,
+      selectedCards: [],
       chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
     };
   },
   methods: {
-    loadFocus() {},
+    // initializeSelectedCards() {
+    //   this.chunkSizes.forEach((chunkSize) => {
+    //     if (!this.selectedCards[chunkSize]) {
+    //       this.selectedCards[chunkSize] = [];
+    //     }
+    //   });
+    // },
     getWebsiteData() {
       const startTime = new Date();
 
@@ -102,7 +117,7 @@ export default {
         .then((loadedCards) => {
           const sortedCards = loadedCards.sort((a, b) => a.length - b.length);
           this.cards = spread(sortedCards, this.chunkSizes);
-          cards.endTime("end chain", startTime);
+          cards.endTime("promiseUntilLast", startTime);
         })
         .catch(function (error) {
           console.log("Error:", error);
@@ -151,10 +166,32 @@ export default {
     wrapperActive(chunkSize) {
       return chunkSize === this.activeChunkSize;
     },
+    selectCard(card) {
+      console.info("click selected");
+      card.selected = !card.selected;
+    },
+    handleKeyDown(event) {
+      if (event.key === "h") {
+        event.preventDefault();
+        this.selectedCards =
+          this.selectedCards.length === 0 ? this.getSelectedCards() : [];
+      }
+    },
+    getSelectedCards() {
+      const selectedCards = [];
+      this.chunkSizes.forEach((chunkSize) => {
+        this.cards[chunkSize].forEach((card) => {
+          if (card.selected) {
+            selectedCards.push(card);
+          }
+        });
+      });
+      return selectedCards;
+    },
   },
   computed: {
-    wrapperActive2: function (chunkSize) {
-      return chunkSize === this.activeChunkSize;
+    comChunkSizes() {
+      return Object.keys(this.cards).map(Number);
     },
   },
 };
@@ -176,6 +213,8 @@ export default {
   margin: 5px;
   background-color: #ccc;
   text-align: center;
+}
+.selected {
 }
 .active {
   display: flex;
@@ -215,5 +254,15 @@ export default {
   border-radius: 32px;
   background: linear-gradient(45deg, #353535, #0f0f0f);
   box-shadow: -5px -5px 10px #353535, 5px 5px 10px #000000;
+}
+img {
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 </style>

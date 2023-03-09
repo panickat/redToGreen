@@ -22,6 +22,7 @@ const hostName = remoteSite.replace("http://", "");
 //   // Log the current time to the console
 //   console.log(`${tittle} ${hours}:${minutes}:${seconds}.`);
 // }
+
 function proxy(id) {
   return createProxyMiddleware("/search/" + id, {
     target: remoteSite,
@@ -46,6 +47,13 @@ function proxy(id) {
       "Sec-GPC": 1,
       "Upgrade-Insecure-Requests": 1,
       "User-Agent": myUserAgent,
+    },
+    setHeaders: (res, path) => {
+      // Disable MIME type checking for images
+      if (/\.(gif|jpg|jpeg|png|th.jpg)$/i.test(path)) {
+        console.info("res.setHeader: ", res.setHeader);
+        res.setHeader("Content-Type", "");
+      }
     },
   });
 }

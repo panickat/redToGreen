@@ -31,6 +31,7 @@
             class="column neuromorphism1"
             v-on:click="selectCard(card)"
             v-bind:class="{ selected: card.selected }"
+            v-show="selectedCards.length === 0 || selectedCards.includes(card)"
           >
             <img :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''" />
           </div>
@@ -52,12 +53,17 @@ export default {
   },
   mounted() {
     this.getWebsiteData();
+    document.addEventListener("keydown", this.handleKeyDown);
     // this.initializeSelectedCards();
+  },
+  beforeUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown);
   },
   data() {
     return {
       cards: {},
       activeChunkSize: 0,
+      selectedCards: [],
       chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
     };
   },
@@ -164,8 +170,30 @@ export default {
       console.info("click selected");
       card.selected = !card.selected;
     },
+    handleKeyDown(event) {
+      if (event.key === "h") {
+        event.preventDefault();
+        this.selectedCards =
+          this.selectedCards.length === 0 ? this.getSelectedCards() : [];
+      }
+    },
+    getSelectedCards() {
+      const selectedCards = [];
+      this.chunkSizes.forEach((chunkSize) => {
+        this.cards[chunkSize].forEach((card) => {
+          if (card.selected) {
+            selectedCards.push(card);
+          }
+        });
+      });
+      return selectedCards;
+    },
   },
-  computed: {},
+  computed: {
+    comChunkSizes() {
+      return Object.keys(this.cards).map(Number);
+    },
+  },
 };
 </script>
 

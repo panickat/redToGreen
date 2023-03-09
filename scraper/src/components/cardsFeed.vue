@@ -1,12 +1,20 @@
 <template>
   <div>
-    <!-- tittles -->
-    <div class="tittles">
-      <div v-for="chunkSize in chunkSizes" :key="chunkSize" class="tittle">
-        <h2 v-if="chunkSize <= 3600" v-on:click="loadNextChunk(chunkSize)">
+    <!-- titles -->
+    <div class="titles">
+      <div v-for="chunkSize in chunkSizes" :key="chunkSize" class="title">
+        <h2
+          v-if="chunkSize <= 3600"
+          v-on:click="loadNextChunk(chunkSize)"
+          v-bind:class="{ title_selected: activeChunkSize === chunkSize }"
+        >
           {{ chunkSize / 60 }}
         </h2>
-        <h2 v-if="chunkSize > 3600" v-on:click="loadNextChunk(chunkSize)">
+        <h2
+          v-if="chunkSize > 3600"
+          v-on:click="loadNextChunk(chunkSize)"
+          v-bind:class="{ title_selected: activeChunkSize === chunkSize }"
+        >
           {{ (chunkSize / 60 / 60).toFixed(1) }}
         </h2>
       </div>
@@ -199,20 +207,24 @@ export default {
 
 <style scoped>
 * {
-  background-color: black;
-  color: #353535;
+  /* background-color: #202124; */
+  background-color: #171717;
+  color: #bdc1c6;
   margin: 0px;
   padding: 0px;
 }
-.tittles {
+.titles {
   display: flex;
   flex-wrap: wrap;
 }
-.tittles .tittle {
+.titles .title {
   flex-basis: calc(11.11% - 10px);
   margin: 5px;
-  background-color: #ccc;
+  background-color: #bdc1c6;
   text-align: center;
+}
+.title_selected {
+  color: #fec848;
 }
 .selected {
 }
@@ -224,9 +236,11 @@ export default {
 }
 .wrapper {
   position: absolute;
+  width: 100%;
 }
 /* <!-- Add "scoped" attribute to limit CSS to this component only --> */
 .container {
+  width: inherit;
   height: 750px;
   overflow-y: scroll;
   max-width: 100%;
@@ -244,6 +258,8 @@ export default {
 
   margin-bottom: 15px;
   overflow: hidden;
+  widows: 480px;
+  height: 380px;
 }
 .column img {
   width: 100%;

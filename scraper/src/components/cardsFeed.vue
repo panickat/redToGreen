@@ -29,7 +29,7 @@
             v-for="card in cards[chunkSize]"
             :key="card.download"
             class="column neuromorphism1"
-            v-on:click="selectCard()"
+            v-on:click="selectCard(card)"
             v-bind:class="{ selected: card.selected }"
           >
             <img :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''" />
@@ -52,25 +52,23 @@ export default {
   },
   mounted() {
     this.getWebsiteData();
-    this.initializeSelectedCards();
+    // this.initializeSelectedCards();
   },
   data() {
     return {
       cards: {},
       activeChunkSize: 0,
       chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
-      selectedCards: {},
     };
   },
   methods: {
-    initializeSelectedCards() {
-      this.chunkSizes.forEach((chunkSize) => {
-        if (!this.selectedCards[chunkSize]) {
-          this.selectedCards[chunkSize] = [];
-        }
-      });
-    },
-    loadFocus() {},
+    // initializeSelectedCards() {
+    //   this.chunkSizes.forEach((chunkSize) => {
+    //     if (!this.selectedCards[chunkSize]) {
+    //       this.selectedCards[chunkSize] = [];
+    //     }
+    //   });
+    // },
     getWebsiteData() {
       const startTime = new Date();
 
@@ -162,20 +160,9 @@ export default {
     wrapperActive(chunkSize) {
       return chunkSize === this.activeChunkSize;
     },
-    selectCard() {
-      // this.cards[chunkSize].findIndex((item) => item.download === cardId);
-
-      // create a Set to keep track of the unique values in this.selectedCards[chunkSize]
-      // const cardIndexSet = new Set(this.selectedCards[chunkSize]);
-      // add the cardIndex to the Set
-      // cardIndexSet.add(cardIndex);
-      // convert the Set back to an array and assign it to this.selectedCards[chunkSize]
-      // this.selectedCards[chunkSize] = Array.from(cardIndexSet);
-
-      // const card = this.cards[chunkSize].find(
-      //   (card) => card.download === cardId
-      // );
+    selectCard(card) {
       console.info("click selected");
+      card.selected = !card.selected;
     },
   },
   computed: {},

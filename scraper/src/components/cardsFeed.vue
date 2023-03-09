@@ -27,9 +27,10 @@
           <!-- Iterate over displayedCards and set an img src to card.img -->
           <div
             v-for="card in cards[chunkSize]"
-            :key="card.img"
+            :key="card.download"
             class="column neuromorphism1"
-            v-on:click="selectCard(card.download, chunkSize)"
+            v-on:click="selectCard()"
+            v-bind:class="{ selected: card.selected }"
           >
             <img :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''" />
           </div>
@@ -112,7 +113,7 @@ export default {
         .then((loadedCards) => {
           const sortedCards = loadedCards.sort((a, b) => a.length - b.length);
           this.cards = spread(sortedCards, this.chunkSizes);
-          cards.endTime("end chain", startTime);
+          cards.endTime("promiseUntilLast", startTime);
         })
         .catch(function (error) {
           console.log("Error:", error);
@@ -161,19 +162,20 @@ export default {
     wrapperActive(chunkSize) {
       return chunkSize === this.activeChunkSize;
     },
-    selectCard(cardId, chunkSize) {
-      const cardIndex = this.cards[chunkSize].findIndex(
-        (item) => item.download === cardId
-      );
+    selectCard() {
+      // this.cards[chunkSize].findIndex((item) => item.download === cardId);
 
       // create a Set to keep track of the unique values in this.selectedCards[chunkSize]
-      const cardIndexSet = new Set(this.selectedCards[chunkSize]);
-
+      // const cardIndexSet = new Set(this.selectedCards[chunkSize]);
       // add the cardIndex to the Set
-      cardIndexSet.add(cardIndex);
-
+      // cardIndexSet.add(cardIndex);
       // convert the Set back to an array and assign it to this.selectedCards[chunkSize]
-      this.selectedCards[chunkSize] = Array.from(cardIndexSet);
+      // this.selectedCards[chunkSize] = Array.from(cardIndexSet);
+
+      // const card = this.cards[chunkSize].find(
+      //   (card) => card.download === cardId
+      // );
+      console.info("click selected");
     },
   },
   computed: {},
@@ -196,6 +198,8 @@ export default {
   margin: 5px;
   background-color: #ccc;
   text-align: center;
+}
+.selected {
 }
 .active {
   display: flex;

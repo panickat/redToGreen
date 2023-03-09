@@ -28,6 +28,7 @@ function getCards($) {
       img: img,
       length: totalSeconds,
       download: download,
+      selected: false,
     });
   });
   return dataArray;

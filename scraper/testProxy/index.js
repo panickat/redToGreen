@@ -1,11 +1,15 @@
 const express = require("express");
+const { createProxyMiddleware } = require("http-proxy-middleware");
+
 const router = express.Router();
 const app = express();
+const secrets = require("./secrets.json");
 
-const { createProxyMiddleware } = require("http-proxy-middleware");
 const myUserAgent =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
+const remoteSite = secrets.remoteSite;
+const hostName = remoteSite.replace("http://", "");
 // function getTime(tittle) {
 //   // Get the current time
 //   const currentTime = new Date();
@@ -18,10 +22,9 @@ const myUserAgent =
 //   // Log the current time to the console
 //   console.log(`${tittle} ${hours}:${minutes}:${seconds}.`);
 // }
-
 function proxy(id) {
   return createProxyMiddleware("/search/" + id, {
-    target: "http://camvideos.me",
+    target: remoteSite,
     changeOrigin: true,
     onProxyReq: function (proxyReq) {
       // Add a cookie to the request
@@ -37,9 +40,9 @@ function proxy(id) {
       "Accept-Language": "en-US,en;q=0.9",
       "Cache-Control": "no-cache",
       Connection: "keep-alive",
-      Host: "camvideos.me",
+      Host: hostName,
       Pragma: "no-cache",
-      Referer: "http://camvideos.me",
+      Referer: remoteSite,
       "Sec-GPC": 1,
       "Upgrade-Insecure-Requests": 1,
       "User-Agent": myUserAgent,

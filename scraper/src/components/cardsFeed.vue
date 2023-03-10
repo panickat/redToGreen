@@ -53,6 +53,7 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import cards from "./getCards";
+import "./efects.css";
 
 export default {
   name: "cardsFeed",

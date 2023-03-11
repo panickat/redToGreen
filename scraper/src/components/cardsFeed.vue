@@ -41,7 +41,9 @@
             v-bind:class="{ selected: card.selected }"
             v-show="selectedCards.length === 0 || selectedCards.includes(card)"
           >
-            <img :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''" />
+            <a>
+              <img :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''" />
+            </a>
           </div>
         </div>
       </div>
@@ -53,7 +55,6 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import cards from "./getCards";
-import "./efects.css";
 
 export default {
   name: "cardsFeed",
@@ -227,8 +228,6 @@ export default {
 .title_selected {
   color: #fec848;
 }
-.selected {
-}
 .active {
   display: flex;
 }
@@ -250,6 +249,14 @@ export default {
   flex-wrap: wrap;
   justify-content: space-between;
 }
+.column:hover {
+  border-radius: 10px;
+  transition: 0.2s ease-in-out;
+}
+.column:hover img {
+  opacity: 1;
+  transition: 0.2s ease-in-out;
+}
 .column {
   flex-basis: calc(33.33% - 4px);
 
@@ -262,10 +269,20 @@ export default {
   widows: 480px;
   height: 380px;
 }
-.column img {
+a {
+  background-color: #7df9ff;
+}
+a:hover {
+  background-color: azure;
+}
+.column img,
+.column a {
   width: 100%;
   height: 100%;
+}
+.column img {
   overflow: hidden;
+  opacity: 0.9;
 }
 .neumorphism1 {
   border-radius: 32px;

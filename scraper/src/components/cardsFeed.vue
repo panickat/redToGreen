@@ -31,7 +31,7 @@
         }"
         :id="chunkSize"
       >
-        <div class="container">
+        <div class="container" @keydown="handleKeyDown" @keyup="handleKeyUp">
           <!-- Iterate over displayedCards and set an img src to card.img -->
           <div
             v-for="card in cards[chunkSize]"
@@ -46,9 +46,9 @@
               @mouseover="card.isHovering = true"
               @mouseleave="card.isHovering = false"
             >
-              <!-- Move the ZoomImage component inside the a tag -->
+              <!-- Move the ZoomImage component inside the a tag and add a v-if directive to check if the zoom flag is set -->
               <ZoomImage
-                v-if="card.isHovering"
+                v-if="card.isHovering && zoomKeyDown"
                 :imageSrc="
                   wrapperActive(chunkSize) ? zoomUrl(card.img) + '?v1' : ''
                 "
@@ -85,6 +85,7 @@ export default {
   mounted() {
     this.getWebsiteData();
     document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keyup", this.handleKeyUp);
     // this.initializeSelectedCards();
   },
   beforeUnmount() {
@@ -97,6 +98,7 @@ export default {
       selectedCards: [],
       chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
       isHovering: false,
+      zoomKeyDown: false,
     };
   },
   methods: {
@@ -204,9 +206,16 @@ export default {
     },
     handleKeyDown(event) {
       if (event.key === "h") {
-        event.preventDefault();
+        // event.preventDefault();
         this.selectedCards =
           this.selectedCards.length === 0 ? this.getSelectedCards() : [];
+      } else if (event.key === "z") {
+        this.zoomKeyDown = true;
+      }
+    },
+    handleKeyUp(event) {
+      if (event.key === "z") {
+        this.zoomKeyDown = false;
       }
     },
     getSelectedCards() {

@@ -44,9 +44,9 @@ export default {
 <style>
 .containerZoom {
   box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.3);
-  height: 400px;
-  width: 400px;
   overflow: hidden;
+  widows: 480px;
+  height: 380px;
 }
 img {
   object-fit: cover;

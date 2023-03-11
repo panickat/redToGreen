@@ -1,5 +1,4 @@
 <template>
-  <ZoomImage :imageSrc="imageSrc"></ZoomImage>
   <div>
     <!-- titles -->
     <div class="titles">
@@ -42,8 +41,19 @@
             v-bind:class="{ selected: card.selected }"
             v-show="selectedCards.length === 0 || selectedCards.includes(card)"
           >
-            <a>
-              <img :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''" />
+            <a @mouseover="isHovering = true" @mouseleave="isHovering = false">
+              <!-- Display the ZoomImage component if the mouse is over the anchor -->
+              <ZoomImage
+                v-if="isHovering"
+                :imageSrc="
+                  wrapperActive(chunkSize) ? zoomUrl(card.img) + '?v1' : ''
+                "
+              />
+              <!-- Display a regular img element if the mouse is not over the anchor -->
+              <img
+                v-else
+                :src="wrapperActive(chunkSize) ? card.img + '?v1' : ''"
+              />
             </a>
           </div>
         </div>
@@ -80,7 +90,7 @@ export default {
       activeChunkSize: 0,
       selectedCards: [],
       chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
-      imageSrc: "https://images.unsplash.com/photo-1582769923195-c6e60dc1d8dc",
+      isHovering: false,
     };
   },
   methods: {
@@ -203,6 +213,9 @@ export default {
         });
       });
       return selectedCards;
+    },
+    zoomUrl(url) {
+      return url.replace(/\.th/g, "");
     },
   },
   computed: {

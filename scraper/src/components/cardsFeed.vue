@@ -1,4 +1,5 @@
 <template>
+  <ZoomImage :imageSrc="imageSrc"></ZoomImage>
   <div>
     <!-- titles -->
     <div class="titles">
@@ -55,11 +56,15 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import cards from "./getCards";
+import ZoomImage from "@/components/ZoomImage.vue";
 
 export default {
   name: "cardsFeed",
   props: {
     msg: String,
+  },
+  components: {
+    ZoomImage,
   },
   mounted() {
     this.getWebsiteData();
@@ -75,6 +80,7 @@ export default {
       activeChunkSize: 0,
       selectedCards: [],
       chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
+      imageSrc: "https://images.unsplash.com/photo-1582769923195-c6e60dc1d8dc",
     };
   },
   methods: {

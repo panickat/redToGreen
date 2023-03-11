@@ -77,3 +77,13 @@ app.use("/", router, (req, res, next) => {
 app.listen(8080, () => {
   console.log("Server listening on port 8080");
 });
+
+process.on("SIGINT", function () {
+  console.log("CTRL+C pressed, executing cleanup code...");
+  // execute your cleanup code here
+  const exec = require("child_process").exec;
+  exec(
+    "kill $(ps aux | grep 'node testProxy/middleware.js' | awk '{print $2}' | tail -n 1)"
+  );
+  process.exit(0);
+});

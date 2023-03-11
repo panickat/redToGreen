@@ -31,12 +31,12 @@
         }"
         :id="chunkSize"
       >
-        <div class="container">
+        <div class="container" @keydown="handleKeyDown" @keyup="handleKeyUp">
           <!-- Iterate over displayedCards and set an img src to card.img -->
           <div
             v-for="card in cards[chunkSize]"
             :key="card.download"
-            class="column neuromorphism1"
+            class="column"
             v-on:click="selectCard(card)"
             v-bind:class="{ selected: card.selected }"
             v-show="selectedCards.length === 0 || selectedCards.includes(card)"
@@ -46,9 +46,9 @@
               @mouseover="card.isHovering = true"
               @mouseleave="card.isHovering = false"
             >
-              <!-- Move the ZoomImage component inside the a tag -->
+              <!-- Move the ZoomImage component inside the a tag and add a v-if directive to check if the zoom flag is set -->
               <ZoomImage
-                v-if="card.isHovering"
+                v-if="card.isHovering && zoomKeyDown"
                 :imageSrc="
                   wrapperActive(chunkSize) ? zoomUrl(card.img) + '?v1' : ''
                 "
@@ -69,9 +69,9 @@
 </template>
 
 <script>
-import axios from "axios";
-import cheerio from "cheerio";
-import cards from "./getCards";
+// import axios from "axios";
+// import cheerio from "cheerio";
+// import cards from "./getCards";
 import ZoomImage from "@/components/ZoomImage.vue";
 
 export default {
@@ -85,6 +85,7 @@ export default {
   mounted() {
     this.getWebsiteData();
     document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keyup", this.handleKeyUp);
     // this.initializeSelectedCards();
   },
   beforeUnmount() {
@@ -97,6 +98,7 @@ export default {
       selectedCards: [],
       chunkSizes: [360, 960, 2700, 4500, 6000, 7200, 9000, 10800, 36000],
       isHovering: false,
+      zoomKeyDown: false,
     };
   },
   methods: {
@@ -108,52 +110,148 @@ export default {
     //   });
     // },
     getWebsiteData() {
-      const startTime = new Date();
+      // const startTime = new Date();
 
-      function spread(cards, chunkSizes) {
-        const cardsByChunk = {};
-        // Initialize empty arrays for each chunk size
-        chunkSizes.forEach((size) => {
-          cardsByChunk[size] = [];
-        });
+      // function spread(cards, chunkSizes) {
+      //   const cardsByChunk = {};
+      //   // Initialize empty arrays for each chunk size
+      //   chunkSizes.forEach((size) => {
+      //     cardsByChunk[size] = [];
+      //   });
 
-        // Loop through each card and append it to the appropriate chunk size
-        cards.forEach((card) => {
-          const length = card.length;
-          for (const size of chunkSizes) {
-            if (length <= size) {
-              cardsByChunk[size].push(card);
-              break;
-            }
-          }
-        });
-        return cardsByChunk;
-      }
+      //   // Loop through each card and append it to the appropriate chunk size
+      //   cards.forEach((card) => {
+      //     const length = card.length;
+      //     for (const size of chunkSizes) {
+      //       if (length <= size) {
+      //         cardsByChunk[size].push(card);
+      //         break;
+      //       }
+      //     }
+      //   });
+      //   return cardsByChunk;
+      // }
 
-      function promiseChainUntilLast(isLast, loadingCards, page) {
-        return new Promise(function (resolve, reject) {
-          if (isLast) {
-            resolve(loadingCards);
-          } else {
-            cards.scrap(page, axios, cheerio).then((response) => {
-              loadingCards = loadingCards.concat(response.cards);
-              promiseChainUntilLast(response.lastPage, loadingCards, page + 1)
-                .then(resolve)
-                .catch(reject);
-            });
-          }
-        });
-      }
+      // function promiseChainUntilLast(isLast, loadingCards, page) {
+      //   return new Promise(function (resolve, reject) {
+      //     if (isLast) {
+      //       resolve(loadingCards);
+      //     } else {
+      //       cards.scrap(page, axios, cheerio).then((response) => {
+      //         loadingCards = loadingCards.concat(response.cards);
+      //         promiseChainUntilLast(response.lastPage, loadingCards, page + 1)
+      //           .then(resolve)
+      //           .catch(reject);
+      //       });
+      //     }
+      //   });
+      // }
 
-      promiseChainUntilLast(false, [], 1)
-        .then((loadedCards) => {
-          const sortedCards = loadedCards.sort((a, b) => a.length - b.length);
-          this.cards = spread(sortedCards, this.chunkSizes);
-          cards.endTime("promiseUntilLast", startTime);
-        })
-        .catch(function (error) {
-          console.log("Error:", error);
-        });
+      // promiseChainUntilLast(false, [], 1)
+      //   .then((loadedCards) => {
+      //     const sortedCards = loadedCards.sort((a, b) => a.length - b.length);
+      //     this.cards = spread(sortedCards, this.chunkSizes);
+      //     cards.endTime("promiseUntilLast", startTime);
+      //   })
+      //   .catch(function (error) {
+      //     console.log("Error:", error);
+      //   });
+      this.cards = {
+        360: [
+          {
+            img: "http://fastimages.org/images/2023/03/07/dazysmit_07032023_1431_female_Chaturbate.th.jpg",
+            length: 357,
+            download: "http://pip.bz/hrm-8b67u",
+            selected: false,
+          },
+        ],
+        960: [
+          {
+            img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1510_female_Chaturbate.th.jpg",
+            length: 418,
+            download: "http://pip.bz/hrm-8aNYw",
+            selected: false,
+            isHovering: false,
+          },
+        ],
+        2700: [
+          {
+            img: "http://fastimages.org/images/2023/03/01/dazysmit_01032023_1603_female_Chaturbate.th.jpg",
+            length: 1050,
+            download: "http://pip.bz/hrm-8aKS8",
+            selected: false,
+            isHovering: false,
+          },
+          {
+            img: "http://fastimages.org/images/2023/03/03/dazysmit_03032023_1129_female_Chaturbate.th.jpg",
+            length: 1680,
+            download: "http://pip.bz/hrm-8aR0R",
+            selected: false,
+            isHovering: false,
+          },
+          {
+            img: "http://fastimages.org/images/2023/03/01/dazysmit_01032023_1300_female_Chaturbate.th.jpg",
+            length: 2179,
+            download: "http://pip.bz/hrm-8aKrD",
+            selected: false,
+            isHovering: false,
+          },
+          {
+            img: "http://fastimages.org/images/2023/02/28/dazysmit_28022023_1327_female_Chaturbate.th.jpg",
+            length: 2421,
+            download: "http://pip.bz/hrm-8aH1d",
+            selected: false,
+            isHovering: false,
+          },
+          {
+            img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1558_female_Chaturbate.th.jpg",
+            length: 2566,
+            download: "http://pip.bz/hrm-8aO5P",
+            selected: false,
+            isHovering: false,
+          },
+        ],
+        4500: [
+          {
+            img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1130_female_Chaturbate.th.jpg",
+            length: 3538,
+            download: "http://pip.bz/hrm-8aNvF",
+            selected: false,
+          },
+        ],
+        6000: [
+          {
+            img: "http://fastimages.org/images/2023/03/03/dazysmit_03032023_1410_female_Chaturbate.th.jpg",
+            length: 5035,
+            download: "http://pip.bz/hrm-8aRo0",
+            selected: false,
+          },
+          {
+            img: "http://fastimages.org/images/2023/02/26/dazysmit_26022023_1711_female_Chaturbate.th.jpg",
+            length: 5082,
+            download: "http://pip.bz/hrm-8aAxY",
+            selected: false,
+          },
+        ],
+        7200: [
+          {
+            img: "http://fastimages.org/images/2023/02/28/dazysmit_28022023_1605_female_Chaturbate.th.jpg",
+            length: 6058,
+            download: "http://pip.bz/hrm-8aHmt",
+            selected: false,
+          },
+        ],
+        9000: [
+          {
+            img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1500_female_Chaturbate.th.jpg",
+            length: 7201,
+            download: "http://pip.bz/hrm-8aNYt",
+            selected: false,
+          },
+        ],
+        10800: [],
+        36000: [],
+      };
     },
     checkScrollPosition() {
       const container = this.$refs.container;
@@ -204,9 +302,16 @@ export default {
     },
     handleKeyDown(event) {
       if (event.key === "h") {
-        event.preventDefault();
+        // event.preventDefault();
         this.selectedCards =
           this.selectedCards.length === 0 ? this.getSelectedCards() : [];
+      } else if (event.key === "z") {
+        this.zoomKeyDown = true;
+      }
+    },
+    handleKeyUp(event) {
+      if (event.key === "z") {
+        this.zoomKeyDown = false;
       }
     },
     getSelectedCards() {
@@ -259,6 +364,12 @@ export default {
 .inactive {
   display: none;
 }
+.selected {
+  border: 1px solid #ffc107;
+}
+.column.selected img {
+  opacity: 1;
+}
 .wrapper {
   position: absolute;
   width: 100%;
@@ -309,11 +420,7 @@ a:hover {
   overflow: hidden;
   opacity: 0.9;
 }
-.neumorphism1 {
-  border-radius: 32px;
-  background: linear-gradient(45deg, #353535, #0f0f0f);
-  box-shadow: -5px -5px 10px #353535, 5px 5px 10px #000000;
-}
+
 img {
   -webkit-user-drag: none;
   -moz-user-drag: none;

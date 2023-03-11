@@ -41,10 +41,14 @@
             v-bind:class="{ selected: card.selected }"
             v-show="selectedCards.length === 0 || selectedCards.includes(card)"
           >
-            <a @mouseover="isHovering = true" @mouseleave="isHovering = false">
-              <!-- Display the ZoomImage component if the mouse is over the anchor -->
+            <!-- Move isHovering inside the v-for loop -->
+            <a
+              @mouseover="card.isHovering = true"
+              @mouseleave="card.isHovering = false"
+            >
+              <!-- Move the ZoomImage component inside the a tag -->
               <ZoomImage
-                v-if="isHovering"
+                v-if="card.isHovering"
                 :imageSrc="
                   wrapperActive(chunkSize) ? zoomUrl(card.img) + '?v1' : ''
                 "
@@ -57,6 +61,8 @@
             </a>
           </div>
         </div>
+
+        <!-- conitainer -->
       </div>
     </div>
   </div>

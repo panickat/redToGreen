@@ -1,7 +1,6 @@
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
-const router = express.Router();
 const app = express();
 const secrets = require("./secrets.json");
 const myUserAgent =
@@ -10,27 +9,20 @@ const remoteSearch = secrets.sites[0].remoteSearch;
 const remoteDownload = secrets.sites[1].remoteDownload;
 
 function hostName(remoteSite) {
-  return remoteSite.replace("http://", "");
+  return remoteSite.replace(/^https?:\/\//i, "");
 }
-// function getTime(tittle) {
-//   // Get the current time
-//   const currentTime = new Date();
 
-//   // Get the hours, minutes, and seconds from the current time
-//   const hours = currentTime.getHours();
-//   const minutes = currentTime.getMinutes();
-//   const seconds = currentTime.getSeconds();
+function setHeaders(res, path) {
+  if (/\.(gif|jpg|jpeg|png|th.jpg)$/i.test(path)) {
+    res.setHeader("Content-Type", "");
+  }
+}
 
-//   // Log the current time to the console
-//   console.log(`${tittle} ${hours}:${minutes}:${seconds}.`);
-// }
-function proxy(target, path, id) {
-  console.info("target, path, id: ", target, path, id);
-  return createProxyMiddleware(path + id, {
-    target: target,
+function createProxy(target, path) {
+  return createProxyMiddleware(path, {
+    target,
     changeOrigin: true,
-    onProxyReq: function (proxyReq) {
-      // Add a cookie to the request
+    onProxyReq(proxyReq) {
       proxyReq.setHeader(
         "Cookie",
         "PHPSESSID=3o6kak1g5qsktf9cbkbjq47ve0=3; Domain=fastimages.org; Path=/"
@@ -50,26 +42,15 @@ function proxy(target, path, id) {
       "Upgrade-Insecure-Requests": 1,
       "User-Agent": myUserAgent,
     },
-    setHeaders: (res, path) => {
-      // Disable MIME type checking for images
-      if (/\.(gif|jpg|jpeg|png|th.jpg)$/i.test(path)) {
-        console.info("res.setHeader: ", res.setHeader);
-        res.setHeader("Content-Type", "");
-      }
-    },
+    setHeaders,
   });
 }
-const proxyHandler = (path) => (req, res, next) => {
-  app.use(path + req.params.id, proxy(remoteSearch, path, req.params.id));
-  next();
-};
+
 const pathSearch = "/search/";
 const pathDownload = "/";
 
-router.use(pathDownload + ":id", proxyHandler(pathSearch));
-router.use(pathSearch + ":id", proxyHandler(pathSearch));
-
-app.use("/", router, (req, res, next) => {
+// CORS headers
+app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
@@ -79,6 +60,21 @@ app.use("/", router, (req, res, next) => {
   res.header("Allow", "GET, POST, OPTIONS, PUT, DELETE");
   next();
 });
+
+// Proxy middlewares
+app.use(pathSearch + ":id", createProxy(remoteSearch, pathSearch));
+app.use(pathDownload + ":id", createProxy(remoteDownload, pathDownload));
+
+// test to download pdf
+const pathTotalplay = "/archivos/pdf/";
+const remoteTotalplay = "https://totalplay.com.mx";
+app.use(pathTotalplay + ":id", createProxy(remoteTotalplay, pathTotalplay));
+// app.use(pathTotalplay + ":id", (req, res, next) => {
+//   console.log("New URL visited:", req.originalUrl);
+//   createProxy(remoteTotalplay, pathTotalplay)(req, res, next);
+// });
+
+// module.exports = app;
 
 app.listen(8080, () => {
   console.log("Server listening on port 8080");

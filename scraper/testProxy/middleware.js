@@ -4,12 +4,14 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const router = express.Router();
 const app = express();
 const secrets = require("./secrets.json");
-
 const myUserAgent =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
+const remoteSearch = secrets.sites[0].remoteSearch;
+const remoteDownload = secrets.sites[1].remoteDownload;
 
-const remoteSite = secrets.remoteSite;
-const hostName = remoteSite.replace("http://", "");
+function hostName(remoteSite) {
+  return remoteSite.replace("http://", "");
+}
 // function getTime(tittle) {
 //   // Get the current time
 //   const currentTime = new Date();
@@ -22,10 +24,10 @@ const hostName = remoteSite.replace("http://", "");
 //   // Log the current time to the console
 //   console.log(`${tittle} ${hours}:${minutes}:${seconds}.`);
 // }
-
-function proxy(id) {
-  return createProxyMiddleware("/search/" + id, {
-    target: remoteSite,
+function proxy(target, path, id) {
+  console.info("target, path, id: ", target, path, id);
+  return createProxyMiddleware(path + id, {
+    target: target,
     changeOrigin: true,
     onProxyReq: function (proxyReq) {
       // Add a cookie to the request
@@ -41,9 +43,9 @@ function proxy(id) {
       "Accept-Language": "en-US,en;q=0.9",
       "Cache-Control": "no-cache",
       Connection: "keep-alive",
-      Host: hostName,
+      Host: hostName(target),
       Pragma: "no-cache",
-      Referer: remoteSite,
+      Referer: target,
       "Sec-GPC": 1,
       "Upgrade-Insecure-Requests": 1,
       "User-Agent": myUserAgent,
@@ -57,11 +59,15 @@ function proxy(id) {
     },
   });
 }
-
-router.use("/search/:id", (req, res, next) => {
-  app.use("/search/" + req.params.id, proxy(req.params.id));
+const proxyHandler = (path) => (req, res, next) => {
+  app.use(path + req.params.id, proxy(remoteSearch, path, req.params.id));
   next();
-});
+};
+const pathSearch = "/search/";
+const pathDownload = "/";
+
+router.use(pathDownload + ":id", proxyHandler(pathSearch));
+router.use(pathSearch + ":id", proxyHandler(pathSearch));
 
 app.use("/", router, (req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");

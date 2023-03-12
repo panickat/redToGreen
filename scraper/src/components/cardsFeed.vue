@@ -307,6 +307,9 @@ export default {
           this.selectedCards.length === 0 ? this.getSelectedCards() : [];
       } else if (event.key === "z") {
         this.zoomKeyDown = true;
+      } else if (event.key == "d") {
+        console.info("downloadFile: ");
+        this.downloadFile();
       }
     },
     handleKeyUp(event) {
@@ -327,6 +330,22 @@ export default {
     },
     zoomUrl(url) {
       return url.replace(/\.th/g, "");
+    },
+    async downloadFile() {
+      const fileUrl = "http://localhost:8080/archivos/pdf/manualNetgem.pdf";
+      try {
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "manualNetgem.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   computed: {

@@ -5,8 +5,6 @@ const cors = require("cors");
 //   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
 const app = express();
-app.use(cors());
-
 const secrets = require("./secrets.json");
 
 // const remoteOpenprovider = secrets.remoteOpenprovider;
@@ -85,23 +83,47 @@ function setOptions(target, oldPath, newPath) {
 
 const searchOptions = setOptions(
   secrets.remoteSearch,
-  "/api/search",
+  "/proxy/search",
   "/search"
 );
 const searchProxy = createProxyMiddleware(searchOptions);
-app.use("/api/search", searchProxy);
+app.use("/proxy/search", searchProxy);
 
-const downloadOptions = setOptions(secrets.remoteOpen, "/api/open", "/");
+const downloadOptions = setOptions(secrets.remoteOpen, "/proxy/open", "/");
 const downloadProxy = createProxyMiddleware(downloadOptions);
-app.use("/api/open", downloadProxy);
+app.use("/proxy/open", downloadProxy);
 
+// err
+const corsOptions = {
+  origin: "*", // allow requests from any origin
+  methods: "GET, POST, PUT, DELETE",
+  allowedHeaders:
+    "Content-Type, Authorization, Origin, X-Requested-With, Accept",
+  exposedHeaders: "Authorization",
+  optionsSuccessStatus: 200,
+  mimeTypes: {
+    "txt/javascript": ["txt"],
+  },
+};
+app.use(cors(corsOptions));
+
+const cdncgiOptions = setOptions(secrets.remoteCloud, "/cdn-cgi", "/cdn-cgi");
+const cdncgiProxy = createProxyMiddleware(cdncgiOptions);
+app.use("/cdn-cgi", cdncgiProxy);
+
+const cloudOptions = setOptions(secrets.remoteCloud, "/proxy/cloud", "/");
+const cloudProxy = createProxyMiddleware(cloudOptions);
+app.use("/proxy/cloud", cloudProxy);
+// err
+//test
 const totalOptions = setOptions(
   secrets.remoteTotal,
-  "/api/total",
+  "/proxy/total",
   "/archivos/pdf"
 );
 const totalProxy = createProxyMiddleware(totalOptions);
-app.use("/api/total", totalProxy);
+app.use("/proxy/total", totalProxy);
+// end test
 
 app.use((req, res, next) => {
   console.log(`## req.url: ${req.url}`);

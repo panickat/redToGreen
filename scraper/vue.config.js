@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: "/search",
   configureWebpack: {
     devServer: {
       headers: { "Access-Control-Allow-Origin": "*" },

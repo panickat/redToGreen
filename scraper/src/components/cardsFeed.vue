@@ -332,14 +332,15 @@ export default {
     },
     async downloadFile() {
       console.log("key d pressed ...");
-      const fileUrl = "http://localhost:8081/apiVue/total/manualNetgem.pdf";
+      // const fileUrl = "http://localhost:8081/apiVue/total/manualNetgem.pdf";
+      const fileUrl = "http://localhost:8081/apiVue/api/open/hrm-8aTf5";
       try {
         const response = await fetch(fileUrl, { mode: "cors" });
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = "test.pdf";
+        link.download = "sweeety_mia_04032023_0159_female_chaturbate.mp4";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

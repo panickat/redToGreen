@@ -69,9 +69,9 @@
 </template>
 
 <script>
-// import axios from "axios";
-// import cheerio from "cheerio";
-// import cards from "./getCards";
+import axios from "axios";
+import cheerio from "cheerio";
+import cards from "./getCards";
 import ZoomImage from "@/components/ZoomImage.vue";
 
 export default {
@@ -110,148 +110,148 @@ export default {
     //   });
     // },
     getWebsiteData() {
-      // const startTime = new Date();
+      const startTime = new Date();
 
-      // function spread(cards, chunkSizes) {
-      //   const cardsByChunk = {};
-      //   // Initialize empty arrays for each chunk size
-      //   chunkSizes.forEach((size) => {
-      //     cardsByChunk[size] = [];
-      //   });
+      function spread(cards, chunkSizes) {
+        const cardsByChunk = {};
+        // Initialize empty arrays for each chunk size
+        chunkSizes.forEach((size) => {
+          cardsByChunk[size] = [];
+        });
 
-      //   // Loop through each card and append it to the appropriate chunk size
-      //   cards.forEach((card) => {
-      //     const length = card.length;
-      //     for (const size of chunkSizes) {
-      //       if (length <= size) {
-      //         cardsByChunk[size].push(card);
-      //         break;
-      //       }
-      //     }
-      //   });
-      //   return cardsByChunk;
-      // }
+        // Loop through each card and append it to the appropriate chunk size
+        cards.forEach((card) => {
+          const length = card.length;
+          for (const size of chunkSizes) {
+            if (length <= size) {
+              cardsByChunk[size].push(card);
+              break;
+            }
+          }
+        });
+        return cardsByChunk;
+      }
 
-      // function promiseChainUntilLast(isLast, loadingCards, page) {
-      //   return new Promise(function (resolve, reject) {
-      //     if (isLast) {
-      //       resolve(loadingCards);
-      //     } else {
-      //       cards.scrap(page, axios, cheerio).then((response) => {
-      //         loadingCards = loadingCards.concat(response.cards);
-      //         promiseChainUntilLast(response.lastPage, loadingCards, page + 1)
-      //           .then(resolve)
-      //           .catch(reject);
-      //       });
-      //     }
-      //   });
-      // }
+      function promiseChainUntilLast(isLast, loadingCards, page) {
+        return new Promise(function (resolve, reject) {
+          if (isLast) {
+            resolve(loadingCards);
+          } else {
+            cards.scrap(page, axios, cheerio).then((response) => {
+              loadingCards = loadingCards.concat(response.cards);
+              promiseChainUntilLast(response.lastPage, loadingCards, page + 1)
+                .then(resolve)
+                .catch(reject);
+            });
+          }
+        });
+      }
 
-      // promiseChainUntilLast(false, [], 1)
-      //   .then((loadedCards) => {
-      //     const sortedCards = loadedCards.sort((a, b) => a.length - b.length);
-      //     this.cards = spread(sortedCards, this.chunkSizes);
-      //     cards.endTime("promiseUntilLast", startTime);
-      //   })
-      //   .catch(function (error) {
-      //     console.log("Error:", error);
-      //   });
-      this.cards = {
-        360: [
-          {
-            img: "http://fastimages.org/images/2023/03/07/dazysmit_07032023_1431_female_Chaturbate.th.jpg",
-            length: 357,
-            download: "http://pip.bz/hrm-8b67u",
-            selected: false,
-          },
-        ],
-        960: [
-          {
-            img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1510_female_Chaturbate.th.jpg",
-            length: 418,
-            download: "http://pip.bz/hrm-8aNYw",
-            selected: false,
-            isHovering: false,
-          },
-        ],
-        2700: [
-          {
-            img: "http://fastimages.org/images/2023/03/01/dazysmit_01032023_1603_female_Chaturbate.th.jpg",
-            length: 1050,
-            download: "http://pip.bz/hrm-8aKS8",
-            selected: false,
-            isHovering: false,
-          },
-          {
-            img: "http://fastimages.org/images/2023/03/03/dazysmit_03032023_1129_female_Chaturbate.th.jpg",
-            length: 1680,
-            download: "http://pip.bz/hrm-8aR0R",
-            selected: false,
-            isHovering: false,
-          },
-          {
-            img: "http://fastimages.org/images/2023/03/01/dazysmit_01032023_1300_female_Chaturbate.th.jpg",
-            length: 2179,
-            download: "http://pip.bz/hrm-8aKrD",
-            selected: false,
-            isHovering: false,
-          },
-          {
-            img: "http://fastimages.org/images/2023/02/28/dazysmit_28022023_1327_female_Chaturbate.th.jpg",
-            length: 2421,
-            download: "http://pip.bz/hrm-8aH1d",
-            selected: false,
-            isHovering: false,
-          },
-          {
-            img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1558_female_Chaturbate.th.jpg",
-            length: 2566,
-            download: "http://pip.bz/hrm-8aO5P",
-            selected: false,
-            isHovering: false,
-          },
-        ],
-        4500: [
-          {
-            img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1130_female_Chaturbate.th.jpg",
-            length: 3538,
-            download: "http://pip.bz/hrm-8aNvF",
-            selected: false,
-          },
-        ],
-        6000: [
-          {
-            img: "http://fastimages.org/images/2023/03/03/dazysmit_03032023_1410_female_Chaturbate.th.jpg",
-            length: 5035,
-            download: "http://pip.bz/hrm-8aRo0",
-            selected: false,
-          },
-          {
-            img: "http://fastimages.org/images/2023/02/26/dazysmit_26022023_1711_female_Chaturbate.th.jpg",
-            length: 5082,
-            download: "http://pip.bz/hrm-8aAxY",
-            selected: false,
-          },
-        ],
-        7200: [
-          {
-            img: "http://fastimages.org/images/2023/02/28/dazysmit_28022023_1605_female_Chaturbate.th.jpg",
-            length: 6058,
-            download: "http://pip.bz/hrm-8aHmt",
-            selected: false,
-          },
-        ],
-        9000: [
-          {
-            img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1500_female_Chaturbate.th.jpg",
-            length: 7201,
-            download: "http://pip.bz/hrm-8aNYt",
-            selected: false,
-          },
-        ],
-        10800: [],
-        36000: [],
-      };
+      promiseChainUntilLast(false, [], 1)
+        .then((loadedCards) => {
+          const sortedCards = loadedCards.sort((a, b) => a.length - b.length);
+          this.cards = spread(sortedCards, this.chunkSizes);
+          cards.endTime("promiseUntilLast", startTime);
+        })
+        .catch(function (error) {
+          console.log("Error:", error);
+        });
+      // this.cards = {
+      //   360: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/07/dazysmit_07032023_1431_female_Chaturbate.th.jpg",
+      //       length: 357,
+      //       download: "http://pip.bz/hrm-8b67u",
+      //       selected: false,
+      //     },
+      //   ],
+      //   960: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1510_female_Chaturbate.th.jpg",
+      //       length: 418,
+      //       download: "http://pip.bz/hrm-8aNYw",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //   ],
+      //   2700: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/01/dazysmit_01032023_1603_female_Chaturbate.th.jpg",
+      //       length: 1050,
+      //       download: "http://pip.bz/hrm-8aKS8",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/03/dazysmit_03032023_1129_female_Chaturbate.th.jpg",
+      //       length: 1680,
+      //       download: "http://pip.bz/hrm-8aR0R",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/01/dazysmit_01032023_1300_female_Chaturbate.th.jpg",
+      //       length: 2179,
+      //       download: "http://pip.bz/hrm-8aKrD",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/02/28/dazysmit_28022023_1327_female_Chaturbate.th.jpg",
+      //       length: 2421,
+      //       download: "http://pip.bz/hrm-8aH1d",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1558_female_Chaturbate.th.jpg",
+      //       length: 2566,
+      //       download: "http://pip.bz/hrm-8aO5P",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //   ],
+      //   4500: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1130_female_Chaturbate.th.jpg",
+      //       length: 3538,
+      //       download: "http://pip.bz/hrm-8aNvF",
+      //       selected: false,
+      //     },
+      //   ],
+      //   6000: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/03/dazysmit_03032023_1410_female_Chaturbate.th.jpg",
+      //       length: 5035,
+      //       download: "http://pip.bz/hrm-8aRo0",
+      //       selected: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/02/26/dazysmit_26022023_1711_female_Chaturbate.th.jpg",
+      //       length: 5082,
+      //       download: "http://pip.bz/hrm-8aAxY",
+      //       selected: false,
+      //     },
+      //   ],
+      //   7200: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/02/28/dazysmit_28022023_1605_female_Chaturbate.th.jpg",
+      //       length: 6058,
+      //       download: "http://pip.bz/hrm-8aHmt",
+      //       selected: false,
+      //     },
+      //   ],
+      //   9000: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1500_female_Chaturbate.th.jpg",
+      //       length: 7201,
+      //       download: "http://pip.bz/hrm-8aNYt",
+      //       selected: false,
+      //     },
+      //   ],
+      //   10800: [],
+      //   36000: [],
+      // };
     },
     checkScrollPosition() {
       const container = this.$refs.container;
@@ -308,7 +308,6 @@ export default {
       } else if (event.key === "z") {
         this.zoomKeyDown = true;
       } else if (event.key == "d") {
-        console.info("downloadFile: ");
         this.downloadFile();
       }
     },
@@ -332,20 +331,30 @@ export default {
       return url.replace(/\.th/g, "");
     },
     async downloadFile() {
-      const fileUrl = "http://localhost:8080/archivos/pdf/manualNetgem.pdf";
+      console.log("key d pressed ...");
+      const fileUrl = "http://localhost:8081/apiVue/total/manualNetgem.pdf";
       try {
-        const response = await fetch(fileUrl);
+        const response = await fetch(fileUrl, { mode: "cors" });
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = "manualNetgem.pdf";
+        link.download = "test.pdf";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       } catch (error) {
-        console.log(error);
+        console.log("try catch: ", error);
       }
+      console.info("download ok O.o");
+      // axios
+      //   .get(fileUrl)
+      //   .then((response) => {
+      //     console.info("response.data: ", response.data);
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
     },
   },
   computed: {

@@ -41,10 +41,12 @@ function isLastPage($) {
   return activepage == numberofpages ? true : false;
 }
 function scrap(page, axios, cheerio) {
+  if (window.location.pathname.split("/")[1] != "search") return;
   // // let self = this;
   // // let dataArray = [];
   const url =
-    "http://localhost:8080/search/" + window.location.pathname.split("/")[1];
+    "http://localhost:8080/api/search/" +
+    window.location.pathname.split("/")[2];
 
   return axios({
     method: "get",

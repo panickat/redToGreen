@@ -36,7 +36,7 @@
           <div
             v-for="card in cards[chunkSize]"
             :key="card.download"
-            class="column neuromorphism1"
+            class="column"
             v-on:click="selectCard(card)"
             v-bind:class="{ selected: card.selected }"
             v-show="selectedCards.length === 0 || selectedCards.includes(card)"
@@ -156,6 +156,102 @@ export default {
         .catch(function (error) {
           console.log("Error:", error);
         });
+      // this.cards = {
+      //   360: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/07/dazysmit_07032023_1431_female_Chaturbate.th.jpg",
+      //       length: 357,
+      //       download: "http://pip.bz/hrm-8b67u",
+      //       selected: false,
+      //     },
+      //   ],
+      //   960: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1510_female_Chaturbate.th.jpg",
+      //       length: 418,
+      //       download: "http://pip.bz/hrm-8aNYw",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //   ],
+      //   2700: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/01/dazysmit_01032023_1603_female_Chaturbate.th.jpg",
+      //       length: 1050,
+      //       download: "http://pip.bz/hrm-8aKS8",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/03/dazysmit_03032023_1129_female_Chaturbate.th.jpg",
+      //       length: 1680,
+      //       download: "http://pip.bz/hrm-8aR0R",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/01/dazysmit_01032023_1300_female_Chaturbate.th.jpg",
+      //       length: 2179,
+      //       download: "http://pip.bz/hrm-8aKrD",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/02/28/dazysmit_28022023_1327_female_Chaturbate.th.jpg",
+      //       length: 2421,
+      //       download: "http://pip.bz/hrm-8aH1d",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1558_female_Chaturbate.th.jpg",
+      //       length: 2566,
+      //       download: "http://pip.bz/hrm-8aO5P",
+      //       selected: false,
+      //       isHovering: false,
+      //     },
+      //   ],
+      //   4500: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1130_female_Chaturbate.th.jpg",
+      //       length: 3538,
+      //       download: "http://pip.bz/hrm-8aNvF",
+      //       selected: false,
+      //     },
+      //   ],
+      //   6000: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/03/dazysmit_03032023_1410_female_Chaturbate.th.jpg",
+      //       length: 5035,
+      //       download: "http://pip.bz/hrm-8aRo0",
+      //       selected: false,
+      //     },
+      //     {
+      //       img: "http://fastimages.org/images/2023/02/26/dazysmit_26022023_1711_female_Chaturbate.th.jpg",
+      //       length: 5082,
+      //       download: "http://pip.bz/hrm-8aAxY",
+      //       selected: false,
+      //     },
+      //   ],
+      //   7200: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/02/28/dazysmit_28022023_1605_female_Chaturbate.th.jpg",
+      //       length: 6058,
+      //       download: "http://pip.bz/hrm-8aHmt",
+      //       selected: false,
+      //     },
+      //   ],
+      //   9000: [
+      //     {
+      //       img: "http://fastimages.org/images/2023/03/02/dazysmit_02032023_1500_female_Chaturbate.th.jpg",
+      //       length: 7201,
+      //       download: "http://pip.bz/hrm-8aNYt",
+      //       selected: false,
+      //     },
+      //   ],
+      //   10800: [],
+      //   36000: [],
+      // };
     },
     checkScrollPosition() {
       const container = this.$refs.container;
@@ -211,6 +307,8 @@ export default {
           this.selectedCards.length === 0 ? this.getSelectedCards() : [];
       } else if (event.key === "z") {
         this.zoomKeyDown = true;
+      } else if (event.key == "d") {
+        this.downloadFile();
       }
     },
     handleKeyUp(event) {
@@ -231,6 +329,33 @@ export default {
     },
     zoomUrl(url) {
       return url.replace(/\.th/g, "");
+    },
+    async downloadFile() {
+      console.log("key d pressed ...");
+      // const fileUrl = "http://localhost:8081/apiVue/total/manualNetgem.pdf";
+      const fileUrl = "http://localhost:8081/apiVue/api/open/hrm-8aTf5";
+      try {
+        const response = await fetch(fileUrl, { mode: "cors" });
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "sweeety_mia_04032023_0159_female_chaturbate.mp4";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.log("try catch: ", error);
+      }
+      console.info("download ok O.o");
+      // axios
+      //   .get(fileUrl)
+      //   .then((response) => {
+      //     console.info("response.data: ", response.data);
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
     },
   },
   computed: {
@@ -267,6 +392,12 @@ export default {
 }
 .inactive {
   display: none;
+}
+.selected {
+  border: 1px solid #ffc107;
+}
+.column.selected img {
+  opacity: 1;
 }
 .wrapper {
   position: absolute;
@@ -318,11 +449,7 @@ a:hover {
   overflow: hidden;
   opacity: 0.9;
 }
-.neumorphism1 {
-  border-radius: 32px;
-  background: linear-gradient(45deg, #353535, #0f0f0f);
-  box-shadow: -5px -5px 10px #353535, 5px 5px 10px #000000;
-}
+
 img {
   -webkit-user-drag: none;
   -moz-user-drag: none;
